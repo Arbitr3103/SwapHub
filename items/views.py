@@ -110,6 +110,11 @@ def item_detail(request, pk):
     user_request = None
     reviews = item.reviews.all().order_by('-created_at')
     
+    # Увеличиваем счетчик просмотров, если пользователь не является владельцем
+    if not request.user.is_authenticated or request.user != item.owner:
+        item.view_count += 1
+        item.save(update_fields=['view_count'])
+    
     # Получаем изображения вещи
     images = ItemImage.objects.filter(item=item).order_by('-is_primary', 'uploaded_at')
     primary_image = images.filter(is_primary=True).first()
