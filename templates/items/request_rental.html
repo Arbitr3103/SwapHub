@@ -1,0 +1,17 @@
+<!-- templates/items/request_rental.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Запрос аренды: {{ item.title }}</title>
+</head>
+<body>
+    <h1>Запрос аренды: {{ item.title }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Отправить запрос</button>
+    </form>
+    <a href="{% url 'item_detail' item.pk %}">Отмена</a>
+</body>
+</html>

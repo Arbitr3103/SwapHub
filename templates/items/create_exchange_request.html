@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Запрос обмена для {{ requested_item.title }}</title>
+</head>
+<body>
+    <h1>Запрос обмена для: {{ requested_item.title }}</h1>
+    <p>Выберите свою вещь, которую хотите обменять:</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Отправить запрос обмена</button>
+    </form>
+    <a href="{% url 'item_detail' requested_item.pk %}">Отмена</a>
+</body>
+</html>

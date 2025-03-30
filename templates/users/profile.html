@@ -1,0 +1,107 @@
+{% extends 'base.html' %} {% load user_filters %} {% block content %}
+<div class="container mt-4">
+
+  <div class="row">
+    <!-- Левая колонка: аватар и основная информация -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body text-center">
+          {% if profile_user.profile.avatar %}
+          <img
+            src="{{ profile_user.profile.avatar.url }}"
+            class="rounded-circle img-fluid mb-3 profile-avatar"
+            alt="Аватар пользователя {{ profile_user.username }}"
+          />
+          {% else %}
+          <img
+            src="https://via.placeholder.com/150"
+            class="rounded-circle img-fluid mb-3 profile-avatar"
+            alt="Стандартный аватар"
+          />
+          {% endif %}
+          <h3>{{ profile_user.username }}</h3>
+          <div class="mt-3">
+            {% if request.user.is_authenticated %}
+              {% if profile_user == request.user %}
+                <!-- Кнопки для своего профиля -->
+                <div class="d-grid gap-2">
+                  <a href="{% url 'edit_profile' %}" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Редактировать профиль
+                  </a>
+                  <a href="{% url 'user_friends_list' profile_user.username %}" class="btn btn-outline-primary">
+                    <i class="fas fa-users"></i> Мои друзья
+                  </a>
+                  <a href="{% url 'friendship_requests' %}" class="btn btn-outline-info">
+                    <i class="fas fa-user-plus"></i> Запросы в друзья
+                  </a>
+                </div>
+              {% else %}
+                <!-- Кнопки для чужого профиля -->
+                <div class="d-grid gap-2">
+                  {% if friendship_status is None %}
+                    <a href="{% url 'send_friend_request' profile_user.username %}" class="btn btn-success">
+                      <i class="fas fa-user-plus"></i> Добавить в друзья
+                    </a>
+                  {% elif friendship_status == 'pending_outgoing' %}
+                    <button class="btn btn-secondary" disabled>
+                      <i class="fas fa-clock"></i> Запрос отправлен
+                    </button>
+                  {% elif friendship_status == 'pending_incoming' %}
+                    <div class="btn-group d-flex" role="group">
+                      <a href="{% url 'accept_friend_request' profile_user.username %}" class="btn btn-success flex-fill">
+                        <i class="fas fa-check"></i> Принять
+                      </a>
+                      <a href="{% url 'reject_friend_request' profile_user.username %}" class="btn btn-danger flex-fill">
+                        <i class="fas fa-times"></i> Отклонить
+                      </a>
+                    </div>
+                  {% elif friendship_status == 'accepted' %}
+                    <div class="btn-group d-flex" role="group">
+                      <button class="btn btn-light flex-fill" disabled>
+                        <i class="fas fa-user-check"></i> В друзьях
+                      </button>
+                      <a href="{% url 'remove_friend' profile_user.username %}" class="btn btn-outline-danger flex-fill">
+                        <i class="fas fa-user-minus"></i> Удалить
+                      </a>
+                    </div>
+                  {% endif %}
+                  
+                  <a href="{% url 'user_friends_list' profile_user.username %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-users"></i> Друзья пользователя
+                  </a>
+                </div>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Правая колонка: дополнительная информация о пользователе -->
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h4>О пользователе</h4>
+          {% if profile_user.profile.bio %}
+          <p>{{ profile_user.profile.bio }}</p>
+          {% else %}
+          <p class="text-muted">Информация о пользователе не указана</p>
+          {% endif %}
+
+          <hr />
+
+          <h5>Контактная информация</h5>
+          <p><strong>Email:</strong> {{ profile_user.email }}</p>
+          {% if profile_user.profile.location %}
+          <p>
+            <strong>Местоположение:</strong> {{ profile_user.profile.location }}
+          </p>
+          {% endif %} {% if profile_user.profile.phone %}
+          <p><strong>Телефон:</strong> {{profile_user.profile.phone }}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

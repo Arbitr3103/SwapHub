@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-exchange-alt me-2"></i>Запросы обмена для ваших вещей</h2>
+        <a href="{% url 'item_list' %}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-1"></i> К списку вещей
+        </a>
+    </div>
+
+    {% if exchange_requests %}
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th><i class="fas fa-box me-2 text-muted"></i>Вещь (запрошенная)</th>
+                            <th><i class="fas fa-exchange me-2 text-muted"></i>Предложенная вещь</th>
+                            <th><i class="fas fa-user me-2 text-muted"></i>Запрашивающий</th>
+                            <th><i class="fas fa-calendar me-2 text-muted"></i>Дата запроса</th>
+                            <th><i class="fas fa-info-circle me-2 text-muted"></i>Статус</th>
+                            <th><i class="fas fa-cog me-2 text-muted"></i>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in exchange_requests %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'item_detail' req.requested_item.id %}" class="text-decoration-none fw-medium">
+                                    {{ req.requested_item.title }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{% url 'item_detail' req.offered_item.id %}" class="text-decoration-none fw-medium">
+                                    {{ req.offered_item.title }}
+                                </a>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{% if req.requester.profile.avatar %}{{ req.requester.profile.avatar.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" 
+                                         class="avatar-xs rounded-circle me-2" alt="{{ req.requester.username }}">
+                                    <span>{{ req.requester.username }}</span>
+                                </div>
+                            </td>
+                            <td>{{ req.created_at|date:"d.m.Y H:i" }}</td>
+                            <td>
+                                {% if req.status == 'pending' %}
+                                    <span class="badge bg-warning">{{ req.get_status_display }}</span>
+                                {% elif req.status == 'approved' %}
+                                    <span class="badge bg-success">{{ req.get_status_display }}</span>
+                                {% elif req.status == 'rejected' %}
+                                    <span class="badge bg-danger">{{ req.get_status_display }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ req.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if req.status == 'pending' %}
+                                    <div class="btn-group">
+                                        <a href="{% url 'approve_exchange_request' req.id %}" class="btn btn-sm btn-success" title="Одобрить">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                        <a href="{% url 'reject_exchange_request' req.id %}" class="btn btn-sm btn-danger" title="Отклонить">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">Нет действий</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card shadow-sm">
+        <div class="card-body text-center py-5">
+            <div class="empty-state">
+                <i class="fas fa-exchange-alt fa-4x text-muted mb-3"></i>
+                <h3 class="mb-2">Нет запросов обмена</h3>
+                <p class="text-muted mb-4">Когда пользователи запросят обмен вашими вещами, запросы появятся здесь.</p>
+                <a href="{% url 'item_list' %}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left me-1"></i> К списку вещей
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

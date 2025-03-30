@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Добавление новой вещи{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h2 class="mb-0 text-center">Добавление новой вещи</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i> Заполните информацию о вещи, которую хотите сдать в аренду или обменять. Добавьте фотографии, чтобы увеличить шансы на аренду.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">Название вещи</label>
+                                {{ form.title|add_class:"form-control" }}
+                                {% if form.title.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.title.errors }}
+                                    </div>
+                                {% endif %}
+                                {% if form.title.help_text %}
+                                    <div class="form-text">{{ form.title.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">Описание</label>
+                                {{ form.description|add_class:"form-control" }}
+                                {% if form.description.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.description.errors }}
+                                    </div>
+                                {% endif %}
+                                {% if form.description.help_text %}
+                                    <div class="form-text">{{ form.description.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">Категория</label>
+                                {{ form.category|add_class:"form-select" }}
+                                {% if form.category.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.category.errors }}
+                                    </div>
+                                {% endif %}
+                                {% if form.category.help_text %}
+                                    <div class="form-text">{{ form.category.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.rental_price.id_for_label }}" class="form-label fw-bold">Цена аренды в день</label>
+                                {{ form.rental_price|add_class:"form-control" }}
+                                {% if form.rental_price.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.rental_price.errors }}
+                                    </div>
+                                {% endif %}
+                                {% if form.rental_price.help_text %}
+                                    <div class="form-text">{{ form.rental_price.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.location.id_for_label }}" class="form-label fw-bold">Местоположение</label>
+                                {{ form.location|add_class:"form-control" }}
+                                {% if form.location.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.location.errors }}
+                                    </div>
+                                {% endif %}
+                                {% if form.location.help_text %}
+                                    <div class="form-text">{{ form.location.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mt-4">
+                                    {{ form.is_available|add_class:"form-check-input" }}
+                                    <label class="form-check-label" for="{{ form.is_available.id_for_label }}">
+                                        Доступно для аренды
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold" for="item_images">Фотографии вещи</label>
+                                <div class="input-group mb-2">
+                                    <input type="file" name="images" class="form-control" accept="image/*" multiple id="item_images" title="Выберите файлы для загрузки" aria-label="Фотографии вещи">
+                                </div>
+                                <div class="form-text">Вы можете выбрать несколько фотографий одновременно. Первая фотография будет использоваться как основная.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Создать вещь</button>
+                            <a href="{% url 'item_list' %}" class="btn btn-outline-secondary">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imagePreviewModalLabel">Предварительный просмотр изображений</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <div id="imagePreviewContainer" class="row"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Валидация формы на стороне клиента
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Предварительный просмотр изображений
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.querySelector('input[name="images"]');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const previewModal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
+    
+    // Добавляем кнопку предварительного просмотра
+    const previewButton = document.createElement('button');
+    previewButton.type = 'button';
+    previewButton.className = 'btn btn-outline-secondary';
+    previewButton.textContent = 'Предпросмотр';
+    previewButton.style.display = 'none';
+    previewButton.addEventListener('click', function() {
+        previewModal.show();
+    });
+    
+    imageInput.parentNode.appendChild(previewButton);
+    
+    imageInput.addEventListener('change', function() {
+        previewContainer.innerHTML = '';
+        
+        if (this.files.length > 0) {
+            previewButton.style.display = 'block';
+            previewButton.textContent = `Предпросмотр (${this.files.length} фото)`;
+            
+            for (let i = 0; i < this.files.length; i++) {
+                const file = this.files[i];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const col = document.createElement('div');
+                    col.className = 'col-md-4 mb-3';
+                    
+                    const card = document.createElement('div');
+                    card.className = 'card h-100';
+                    
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'card-img-top';
+                    img.style.height = '200px';
+                    img.style.objectFit = 'cover';
+                    
+                    const cardBody = document.createElement('div');
+                    cardBody.className = 'card-body';
+                    
+                    const cardText = document.createElement('p');
+                    cardText.className = 'card-text small';
+                    cardText.textContent = file.name;
+                    
+                    if (i === 0) {
+                        const badge = document.createElement('span');
+                        badge.className = 'badge bg-success mb-2';
+                        badge.textContent = 'Основное фото';
+                        cardBody.appendChild(badge);
+                    }
+                    
+                    cardBody.appendChild(cardText);
+                    card.appendChild(img);
+                    card.appendChild(cardBody);
+                    col.appendChild(card);
+                    previewContainer.appendChild(col);
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        } else {
+            previewButton.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Добавление фотографий для {{ item.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h2 class="mb-0 text-center">Добавление фотографий</h2>
+                    <p class="text-center mb-0 mt-2">Для вещи: "{{ item.title }}"</p>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info mb-4">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="fas fa-info-circle fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5 class="alert-heading">Важно!</h5>
+                                <p class="mb-0">Загрузите фотографии вашей вещи. Первая загруженная фотография будет использоваться как основная и будет отображаться в списке вещей.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form method="post" enctype="multipart/form-data" class="mb-4">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="images" class="form-label fw-bold">Выберите фотографии</label>
+                            <div class="input-group mb-2">
+                                <input type="file" name="images" id="images" class="form-control form-control-lg" accept="image/*" multiple>
+                                <button type="submit" class="btn btn-primary">Загрузить</button>
+                            </div>
+                            <div class="form-text">Вы можете выбрать несколько фотографий одновременно. Рекомендуемые форматы: JPG, PNG.</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" name="finish" class="btn btn-success btn-lg">
+                                <i class="fas fa-check-circle me-2"></i> Завершить и перейти к вещи
+                            </button>
+                        </div>
+                    </form>
+                    
+                    {% if images %}
+                    <div class="mt-5">
+                        <h4 class="mb-4 border-bottom pb-2">
+                            <i class="fas fa-images me-2"></i> Загруженные фотографии ({{ images|length }})
+                        </h4>
+                        <div class="row row-cols-1 row-cols-md-3 g-4">
+                            {% for image in images %}
+                            <div class="col">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="position-relative">
+                                        <img src="{{ image.image.url }}" class="card-img-top item-image-preview" alt="{{ item.title }}">
+                                        {% if image.is_primary %}
+                                        <div class="position-absolute top-0 start-0 m-2">
+                                            <span class="badge bg-success">Основное фото</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text small text-muted">
+                                            <i class="far fa-clock me-1"></i> Загружено: {{ image.uploaded_at|date:"d.m.Y H:i" }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning mt-4">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle me-3 fa-2x"></i>
+                            <div>
+                                <h5 class="alert-heading">Нет фотографий</h5>
+                                <p class="mb-0">У этой вещи пока нет фотографий. Вещи с фотографиями привлекают больше внимания и чаще арендуются.</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-light py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'item_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-list me-1"></i> Вернуться к списку вещей
+                        </a>
+                        <a href="{% url 'item_detail' pk=item.pk %}" class="btn btn-primary">
+                            <i class="fas fa-eye me-1"></i> Просмотреть вещь
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Предварительный просмотр загружаемых изображений
+document.getElementById('images').addEventListener('change', function(e) {
+    const fileInput = e.target;
+    const files = fileInput.files;
+    
+    if (files.length > 0) {
+        document.querySelector('button[type="submit"]:not([name="finish"])').textContent = `Загрузить (${files.length} фото)`;
+    } else {
+        document.querySelector('button[type="submit"]:not([name="finish"])').textContent = 'Загрузить';
+    }
+});
+</script>
+{% endblock %}

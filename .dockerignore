@@ -1,0 +1,51 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+.Python
+*.py[cod]
+*$py.class
+*.so
+.env
+.env.*
+!.env.example
+
+# Виртуальное окружение
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Локальные файлы разработки
+*.log
+*.sqlite3
+media/
+staticfiles/
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Тесты
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Документация
+docs/
+*.md
+
+# Временные файлы
+*.bak
+*.tmp
+.DS_Store

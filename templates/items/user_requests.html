@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Мои запросы на аренду</h2>
+    
+    {% if requests %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Вещь</th>
+                        <th>Владелец</th>
+                        <th>Даты</th>
+                        <th>Статус</th>
+                        <th>Дата запроса</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in requests %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'item_detail' request.item.id %}">{{ request.item.title }}</a>
+                        </td>
+                        <td>{{ request.item.owner.username }}</td>
+                        <td>{{ request.start_date }} - {{ request.end_date }}</td>
+                        <td>
+                            {% if request.status == 'pending' %}
+                                <span class="badge bg-warning">Ожидает ответа</span>
+                            {% elif request.status == 'approved' %}
+                                <span class="badge bg-success">Одобрен</span>
+                            {% elif request.status == 'rejected' %}
+                                <span class="badge bg-danger">Отклонен</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ request.created_at|date:"d.m.Y H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            У вас пока нет запросов на аренду.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

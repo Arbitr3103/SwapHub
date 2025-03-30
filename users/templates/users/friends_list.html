@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Друзья {{ profile_user.username }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h3 class="mb-0">Друзья пользователя {{ profile_user.username }}</h3>
+      {% if profile_user == request.user %}
+      <a href="{% url 'friendship_requests' %}" class="btn btn-primary"
+        >Управление друзьями</a
+      >
+      {% endif %}
+    </div>
+    <div class="card-body">
+      {% if friends %}
+      <div class="row">
+        {% for friend in friends %}
+        <div class="col-md-4 col-sm-6 mb-4 fade-in">
+          <div class="card friend-card h-100">
+            <div class="card-body text-center">
+              {% if friend.profile.avatar %}
+              <img
+                src="{{ friend.profile.avatar.url }}"
+                class="friend-avatar mb-3"
+                alt="{{ friend.username }}"
+              />
+              {% else %}
+              <img
+                src="https://via.placeholder.com/100"
+                class="friend-avatar mb-3"
+                alt="{{ friend.username }}"
+              />
+              {% endif %}
+
+              <h5 class="card-title">{{ friend.username }}</h5>
+
+              {% if friend.profile.location %}
+              <p class="text-muted">{{ friend.profile.location }}</p>
+              {% endif %}
+
+              <div class="mt-auto pt-3 btn-group-responsive">
+                <a
+                  href="{% url 'user_profile' friend.username %}"
+                  class="btn btn-primary"
+                  ><i class="fas fa-user me-1" aria-hidden="true"></i> Профиль</a
+                >
+                {% if profile_user == request.user %}
+                <a
+                  href="{% url 'remove_friend' friend.username %}"
+                  class="btn btn-outline-danger mt-2"
+                  onclick="return confirm('Вы уверены, что хотите удалить этого пользователя из друзей?')"
+                  title="Удалить из друзей"
+                  ><i class="fas fa-user-minus me-1" aria-hidden="true"></i> Удалить</a
+                >
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="alert alert-info">
+        {% if profile_user == request.user %} У вас пока нет друзей.
+        <a href="{% url 'friendship_requests' %}" title="Управление запросами">Управление запросами дружбы</a>
+        {% else %} У пользователя {{ profile_user.username }} пока нет друзей.
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+    
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="card-footer">
+      <nav aria-label="Навигация по страницам">
+        <ul class="pagination justify-content-center mb-0">
+          {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page=1" aria-label="Первая" title="Первая страница"><span aria-hidden="true">&laquo;&laquo;</span></a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Предыдущая" title="Предыдущая страница"><span aria-hidden="true">&laquo;</span></a></li>
+          {% else %}
+          <li class="page-item disabled"><a class="page-link" href="#" aria-label="Первая" title="Первая страница"><span aria-hidden="true">&laquo;&laquo;</span></a></li>
+          <li class="page-item disabled"><a class="page-link" href="#" aria-label="Предыдущая" title="Предыдущая страница"><span aria-hidden="true">&laquo;</span></a></li>
+          {% endif %}
+          {% for i in page_obj.paginator.page_range %}
+          {% if page_obj.number == i %}
+          <li class="page-item active"><a class="page-link" href="?page={{ i }}" title="Страница {{ i }}">{{ i }}</a></li>
+          {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+          <li class="page-item"><a class="page-link" href="?page={{ i }}" title="Страница {{ i }}">{{ i }}</a></li>
+          {% endif %}
+          {% endfor %}
+          {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Следующая" title="Следующая страница"><span aria-hidden="true">&raquo;</span></a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Последняя" title="Последняя страница"><span aria-hidden="true">&raquo;&raquo;</span></a></li>
+          {% else %}
+          <li class="page-item disabled"><a class="page-link" href="#" aria-label="Следующая" title="Следующая страница"><span aria-hidden="true">&raquo;</span></a></li>
+          <li class="page-item disabled"><a class="page-link" href="#" aria-label="Последняя" title="Последняя страница"><span aria-hidden="true">&raquo;&raquo;</span></a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

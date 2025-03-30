@@ -1,0 +1,169 @@
+<!-- templates/items/item_detail.html -->
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <h1>{{ item.title }}</h1>
+  <div class="row">
+    <div class="col-md-8">
+      <!-- Карусель изображений -->
+      {% if images %}
+      <div id="itemImagesCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          {% for image in images %}
+          <div class="carousel-item {% if image.is_primary %}active{% endif %}">
+            <img src="{{ image.image.url }}" class="d-block w-100 rounded item-carousel-image" alt="{{ item.title }}">
+          </div>
+          {% endfor %}
+        </div>
+        {% if images.count > 1 %}
+        <button class="carousel-control-prev" type="button" data-bs-target="#itemImagesCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Предыдущий</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#itemImagesCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Следующий</span>
+        </button>
+        {% endif %}
+      </div>
+      
+      <!-- Миниатюры для изображений -->
+      {% if images.count > 1 %}
+      <div class="row mb-4">
+        {% for image in images %}
+        <div class="col-3 col-md-2">
+          <img src="{{ image.image.url }}" 
+               class="img-thumbnail mb-2 w-100 {% if image.is_primary %}border-primary{% endif %}" 
+               data-bs-target="#itemImagesCarousel" 
+               data-bs-slide-to="{{ forloop.counter0 }}" 
+               alt="Миниатюра {{ forloop.counter }}" 
+               class="item-thumbnail">
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% else %}
+      <div class="card mb-4">
+        <div class="card-body text-center">
+          <img src="/static/img/no-image.jpg" class="rounded mb-3 item-no-image" alt="Нет изображения">
+          <p class="text-muted">Изображения не добавлены</p>
+        </div>
+      </div>
+      {% endif %}
+      
+      <!-- Информация о вещи -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h3 class="card-title mb-3">Информация о вещи</h3>
+          <p><strong>Описание:</strong> {{ item.description }}</p>
+          <p><strong>Категория:</strong> {{ item.get_category_display }}</p>
+          <p><strong>Цена аренды:</strong> {{ item.rental_price }} руб./день</p>
+          <p>
+            <strong>Доступность:</strong> 
+            <span class="badge {% if item.is_available %}bg-success{% else %}bg-danger{% endif %}">
+              {{ item.is_available|yesno:"Доступно,Недоступно" }}
+            </span>
+          </p>
+          <p><strong>Владелец:</strong> {{ item.owner.username }}</p>
+          <p><strong>Местоположение:</strong> {{ item.location }}</p>
+        </div>
+      </div>
+
+      {% if request.user == item.owner %}
+      <div class="mb-3">
+        <a href="{% url 'edit_item' item.pk %}" class="btn btn-primary"
+          >Редактировать</a
+        >
+        <a href="{% url 'delete_item' item.pk %}" class="btn btn-danger"
+          >Удалить</a
+        >
+      </div>
+      {% else %}
+      <div class="mb-3">
+        <a href="{% url 'rental_calendar' item.pk %}" class="btn btn-success"
+          >Запросить аренду</a
+        >
+        <a
+          href="{% url 'create_exchange_request' item.pk %}"
+          class="btn btn-info"
+          >Предложить обмен</a
+        >
+        {% if user.is_authenticated %}
+        <a href="{% url 'add_review' item.pk %}" class="btn btn-primary"
+          >Добавить отзыв</a
+        >
+        {% endif %}
+      </div>
+      {% endif %} {% if user_request %}
+      <div class="card mb-3">
+        <div class="card-body">
+          <h3 class="card-title">Ваш запрос аренды</h3>
+          <p>
+            <strong>Период:</strong> {{ user_request.start_date }} — {{
+            user_request.end_date }}
+          </p>
+          <p><strong>Статус:</strong> {{ user_request.get_status_display }}</p>
+        </div>
+      </div>
+      {% endif %} {% if item.approved_rental_requests|length %}
+      <div class="card mb-3">
+        <div class="card-body">
+          <h3 class="card-title">Забронированные периоды:</h3>
+          <ul class="list-unstyled">
+            {% for req in item.approved_rental_requests %}
+            <li>{{ req.start_date }} – {{ req.end_date }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Отзывы</h3>
+          {% if item.reviews.all %} {% for review in item.reviews.all %}
+          <div class="mb-3 pb-3 border-bottom">
+            <div class="d-flex justify-content-between">
+              <strong>{{ review.reviewer.username }}</strong>
+              <span class="text-muted"
+                >{{ review.created_at|date:"d.m.Y" }}</span
+              >
+            </div>
+            <div class="text-warning">
+              {% for i in review.rating|rjust:5 %}★{% endfor %}
+            </div>
+            <p class="mb-0">{{ review.comment }}</p>
+          </div>
+          {% endfor %} {% else %}
+          <p class="text-muted">Пока нет отзывов</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a href="{% url 'item_list' %}" class="btn btn-secondary mt-3"
+    >Вернуться к списку вещей</a
+  >
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Активируем карусель
+    const carousel = document.getElementById('itemImagesCarousel');
+    if (carousel) {
+      const carouselInstance = new bootstrap.Carousel(carousel);
+      
+      // Обрабатываем клики по миниатюрам
+      const thumbnails = document.querySelectorAll('[data-bs-target="#itemImagesCarousel"]');
+      thumbnails.forEach(thumbnail => {
+        thumbnail.addEventListener('click', function() {
+          const slideIndex = this.getAttribute('data-bs-slide-to');
+          carouselInstance.to(parseInt(slideIndex));
+        });
+      });
+    }
+  });
+</script>
+{% endblock %}

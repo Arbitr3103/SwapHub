@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Запросы аренды ваших вещей{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0"><i class="fas fa-inbox me-2"></i>Запросы аренды ваших вещей</h2>
+                    <a href="{% url 'item_list' %}" class="btn btn-light">
+                        <i class="fas fa-arrow-left me-1"></i> Вернуться к списку вещей
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    {% if requests %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="px-4 py-3">Вещь</th>
+                                    <th class="px-4 py-3">Запросивший</th>
+                                    <th class="px-4 py-3">Период аренды</th>
+                                    <th class="px-4 py-3">Статус</th>
+                                    <th class="px-4 py-3 text-center">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for req in requests %}
+                                <tr>
+                                    <td class="px-4 py-3">
+                                        <div class="d-flex align-items-center">
+                                            {% if req.item.images.first %}
+                                            <img src="{{ req.item.images.first.image.url }}" alt="{{ req.item.title }}" 
+                                                 class="rounded me-3 avatar-small" width="50" height="50">
+                                            {% else %}
+                                            <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center avatar-icon-container">
+                                                <i class="fas fa-box text-secondary"></i>
+                                            </div>
+                                            {% endif %}
+                                            <div>
+                                                <a href="{% url 'item_detail' req.item.id %}" class="text-decoration-none fw-bold">{{ req.item.title }}</a>
+                                                <div class="small text-muted">ID: {{ req.item.id }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="d-flex align-items-center">
+                                            {% if req.renter.profile.avatar %}
+                                            <img src="{{ req.renter.profile.avatar.url }}" alt="{{ req.renter.username }}" 
+                                                 class="rounded-circle me-2" width="32" height="32">
+                                            {% else %}
+                                            <div class="bg-secondary rounded-circle me-2 d-flex align-items-center justify-content-center user-avatar-circle">
+                                                <i class="fas fa-user text-white small"></i>
+                                            </div>
+                                            {% endif %}
+                                            <a href="{% url 'user_profile' req.renter.username %}" class="text-decoration-none">{{ req.renter.username }}</a>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div>
+                                            <div class="d-flex align-items-center mb-1">
+                                                <i class="fas fa-calendar-alt text-primary me-2"></i>
+                                                <span>{{ req.start_date|date:"d.m.Y" }} — {{ req.end_date|date:"d.m.Y" }}</span>
+                                            </div>
+                                            <div class="small text-muted">
+                                                {% with days=req.start_date|timesince:req.end_date %}
+                                                <i class="fas fa-clock me-1"></i> {{ days }}
+                                                {% endwith %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        {% if req.status == 'pending' %}
+                                        <span class="badge bg-warning text-dark"><i class="fas fa-hourglass-half me-1"></i> Ожидает</span>
+                                        {% elif req.status == 'approved' %}
+                                        <span class="badge bg-success"><i class="fas fa-check me-1"></i> Одобрен</span>
+                                        {% elif req.status == 'rejected' %}
+                                        <span class="badge bg-danger"><i class="fas fa-times me-1"></i> Отклонен</span>
+                                        {% elif req.status == 'completed' %}
+                                        <span class="badge bg-info"><i class="fas fa-flag-checkered me-1"></i> Завершен</span>
+                                        {% elif req.status == 'cancelled' %}
+                                        <span class="badge bg-secondary"><i class="fas fa-ban me-1"></i> Отменен</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        {% if req.status == 'pending' %}
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'approve_request' req.id %}" class="btn btn-sm btn-success">
+                                                <i class="fas fa-check me-1"></i> Одобрить
+                                            </a>
+                                            <a href="{% url 'reject_request' req.id %}" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-times me-1"></i> Отклонить
+                                            </a>
+                                        </div>
+                                        {% else %}
+                                        <span class="text-muted"><i class="fas fa-minus-circle"></i> Нет действий</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <div class="mb-3">
+                            <i class="fas fa-inbox fa-4x text-muted"></i>
+                        </div>
+                        <h4 class="text-muted">Нет активных запросов</h4>
+                        <p class="text-muted">На данный момент запросов на аренду ваших вещей нет.</p>
+                        <a href="{% url 'item_list' %}" class="btn btn-primary mt-2">
+                            <i class="fas fa-arrow-left me-1"></i> Вернуться к списку вещей
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

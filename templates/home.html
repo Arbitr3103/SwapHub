@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SwapHub - Платформа обмена и аренды вещей{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+  <!-- Hero секция -->
+  <div class="position-relative overflow-hidden p-3 p-md-5 bg-light hero-section">
+    <div class="col-md-8 p-lg-5 mx-auto my-5">
+      <h1 class="display-4 fw-bold">Добро пожаловать в SwapHub!</h1>
+      <p class="lead fw-normal">Платформа, где вы можете обмениваться вещами, брать их в аренду и находить новых друзей с общими интересами.</p>
+      <div class="d-flex gap-3 mt-4">
+        {% if user.is_authenticated %}
+          <a href="{% url 'item_list' %}" class="btn btn-primary btn-lg px-4">Смотреть вещи</a>
+          <a href="{% url 'add_item' %}" class="btn btn-outline-light btn-lg px-4">Добавить вещь</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4">Войти</a>
+          <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg px-4">Зарегистрироваться</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Секция "Как это работает" -->
+  <div class="container py-5">
+    <h2 class="text-center mb-5">Как это работает</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body text-center">
+            <div class="mb-4">
+              <i class="fas fa-upload fa-3x text-primary"></i>
+            </div>
+            <h3 class="card-title h5">Добавьте вещи</h3>
+            <p class="card-text">Загрузите фотографии и описания вещей, которыми вы готовы поделиться или сдать в аренду.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body text-center">
+            <div class="mb-4">
+              <i class="fas fa-search fa-3x text-primary"></i>
+            </div>
+            <h3 class="card-title h5">Найдите нужное</h3>
+            <p class="card-text">Просматривайте каталог вещей, доступных для обмена или аренды, и отправляйте запросы.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body text-center">
+            <div class="mb-4">
+              <i class="fas fa-handshake fa-3x text-primary"></i>
+            </div>
+            <h3 class="card-title h5">Обменивайтесь</h3>
+            <p class="card-text">Договаривайтесь об условиях обмена или аренды и наслаждайтесь использованием новых вещей.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Секция преимуществ -->
+  <div class="bg-light py-5">
+    <div class="container">
+      <h2 class="text-center mb-5">Преимущества SwapHub</h2>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="d-flex align-items-start">
+            <div class="me-3">
+              <i class="fas fa-leaf fa-2x text-success"></i>
+            </div>
+            <div>
+              <h3 class="h5">Экологичность</h3>
+              <p>Повторное использование вещей снижает потребление и помогает сохранить окружающую среду.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex align-items-start">
+            <div class="me-3">
+              <i class="fas fa-wallet fa-2x text-success"></i>
+            </div>
+            <div>
+              <h3 class="h5">Экономия</h3>
+              <p>Получайте доступ к нужным вещам без необходимости их покупки и зарабатывайте на своих неиспользуемых вещах.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex align-items-start">
+            <div class="me-3">
+              <i class="fas fa-users fa-2x text-success"></i>
+            </div>
+            <div>
+              <h3 class="h5">Сообщество</h3>
+              <p>Находите единомышленников и новых друзей с похожими интересами и ценностями.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex align-items-start">
+            <div class="me-3">
+              <i class="fas fa-shield-alt fa-2x text-success"></i>
+            </div>
+            <div>
+              <h3 class="h5">Безопасность</h3>
+              <p>Система рейтингов и отзывов помогает выбирать надежных пользователей для обмена и аренды.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Секция с призывом к действию -->
+  <div class="container py-5">
+    <div class="p-5 text-center bg-primary text-white rounded-3">
+      <h2 class="mb-4">Готовы начать?</h2>
+      <p class="lead mb-4">Присоединяйтесь к сообществу SwapHub и откройте для себя новый способ использования вещей!</p>
+      {% if user.is_authenticated %}
+        <a href="{% url 'item_list' %}" class="btn btn-light btn-lg px-4">Смотреть вещи</a>
+      {% else %}
+        <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4">Зарегистрироваться</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Секция с последними добавленными вещами -->
+  {% if latest_items %}
+  <div class="container py-5">
+    <h2 class="text-center mb-5">Недавно добавленные вещи</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      {% for item in latest_items %}
+      <div class="col">
+        <div class="card h-100 shadow-sm">
+          {% if item.images.first %}
+          <img src="{{ item.images.first.image.url }}" class="card-img-top item-card-image" alt="{{ item.title }}">
+          {% else %}
+          <img src="/static/img/no-image.jpg" class="card-img-top item-card-image" alt="Нет изображения">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ item.title }}</h5>
+            <p class="card-text">{{ item.description|truncatechars:100 }}</p>
+          </div>
+          <div class="card-footer bg-transparent">
+            <a href="{% url 'item_detail' item.id %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

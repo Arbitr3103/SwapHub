@@ -1,0 +1,280 @@
+/* Анимации и переходы */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для домашней страницы */
+.hero-section {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/static/img/hero-bg.jpg') no-repeat center center;
+  background-size: cover;
+  color: white;
+}
+
+.item-card-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Стили для списка товаров */
+.item-list-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Стили для страницы добавления изображений */
+.item-image-preview {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Стили для страницы редактирования товара */
+.item-edit-image {
+  height: 150px;
+  object-fit: cover;
+}
+
+/* Стили для базового шаблона */
+.hidden {
+  display: none;
+}
+
+/* Стили для страницы деталей товара */
+.item-carousel-image {
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.item-thumbnail {
+  cursor: pointer;
+  height: 80px;
+  object-fit: cover;
+}
+
+.item-no-image {
+  max-height: 300px;
+}
+
+/* Улучшения для мобильной версии */
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+  
+  .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .pagination .page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .friend-card {
+    margin-bottom: 15px;
+  }
+}
+
+/* Стили для аватаров и иконок */
+.avatar-small {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.avatar-icon-container {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-avatar-circle {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Улучшение отображения кнопок в мобильной версии */
+@media (max-width: 768px) {
+  .btn-group-responsive {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .btn-group-responsive .btn {
+    margin-bottom: 0.5rem;
+    width: 100%;
+  }
+  
+  /* Улучшение навигации на мобильных устройствах */
+  .navbar-collapse {
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  /* Улучшение отображения профиля на мобильных устройствах */
+  .profile-mobile {
+    text-align: center;
+  }
+  
+  .profile-mobile .btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Улучшения для карточек друзей */
+.friend-card {
+  border-radius: 10px;
+  overflow: hidden;
+  height: 100%;
+}
+
+.friend-card .card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.friend-avatar {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.friend-avatar:hover {
+  transform: scale(1.05);
+}
+
+/* Стили для пагинации */
+.pagination {
+  margin-bottom: 0;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.pagination .page-link {
+  color: #007bff;
+  transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+  background-color: #e9ecef;
+  transform: scale(1.1);
+}
+
+/* Улучшения для профиля */
+.profile-header {
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.profile-avatar {
+  transition: transform 0.3s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+}
+
+/* Улучшения для уведомлений */
+.notification-item {
+  transition: background-color 0.3s ease;
+}
+
+.notification-item:hover {
+  background-color: #f8f9fa;
+}
+
+.unread-notification {
+  border-left: 3px solid #007bff;
+}
+
+/* Exchange Requests Styling */
+.empty-state {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.table-hover tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f8f9fa;
+  transform: translateX(4px);
+}
+
+.badge {
+  font-size: 0.9em;
+  padding: 0.5em 0.75em;
+}
+
+.btn-outline-primary {
+  border-color: #0d6efd;
+}
+
+.btn-outline-success {
+  border-color: #198754;
+}
+
+/* Avatar sizes */
+.avatar-xs {
+  width: 24px;
+  height: 24px;
+  object-fit: cover;
+}
+
+.avatar-sm {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+}
+
+.avatar-md {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+}

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Фильтры -->
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Фильтры</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="mb-4">
+                        <div class="mb-3">
+                            <label for="search" class="form-label">Поиск</label>
+                            <input type="text" name="search" class="form-control" value="{{ request.GET.search }}" placeholder="Название или описание">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Цена</label>
+                            <div class="row">
+                                <div class="col">
+                                    <input type="number" name="min_price" class="form-control" value="{{ request.GET.min_price }}" placeholder="От">
+                                </div>
+                                <div class="col">
+                                    <input type="number" name="max_price" class="form-control" value="{{ request.GET.max_price }}" placeholder="До">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Город/Адрес</label>
+                            <input type="text" name="location" class="form-control" value="{{ request.GET.location }}" placeholder="Введите город">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Категория</label>
+                            <input type="text" name="category" class="form-control" value="{{ request.GET.category }}" placeholder="Категория">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="ordering" class="form-label">Сортировка</label>
+                            <select name="ordering" class="form-select">
+                                <option value="">По умолчанию</option>
+                                <option value="created_at" {% if request.GET.ordering == 'created_at' %}selected{% endif %}>Дата ↑</option>
+                                <option value="-created_at" {% if request.GET.ordering == '-created_at' %}selected{% endif %}>Дата ↓</option>
+                                <option value="rental_price" {% if request.GET.ordering == 'rental_price' %}selected{% endif %}>Цена ↑</option>
+                                <option value="-rental_price" {% if request.GET.ordering == '-rental_price' %}selected{% endif %}>Цена ↓</option>
+                                <option value="-avg_rating" {% if request.GET.ordering == '-avg_rating' %}selected{% endif %}>Рейтинг ↓</option>
+                                <option value="-total_reviews" {% if request.GET.ordering == '-total_reviews' %}selected{% endif %}>Отзывы ↓</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" name="is_available" class="form-check-input" value="true" {% if request.GET.is_available %}checked{% endif %}>
+                                <label class="form-check-label">Только доступные</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Применить фильтры</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список вещей -->
+        <div class="col-md-9">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for item in items %}
+                <div class="col">
+                    <div class="card h-100">
+                        {% if item.image %}
+                        <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.title }}</h5>
+                            <p class="card-text">{{ item.description|truncatewords:20 }}</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt"></i> {{ item.location|default:"Местоположение не указано" }}
+                                </small>
+                            </p>
+                            <p class="card-text">
+                                <strong>{{ item.rental_price }} ₽/день</strong>
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-star"></i> {{ item.avg_rating|default:0|floatformat:1 }} ({{ item.total_reviews }} отзывов)
+                                </small>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'item_detail' item.id %}" class="btn btn-primary">Подробнее</a>
+                            {% if user == item.owner %}
+                            <a href="{% url 'edit_item' item.id %}" class="btn btn-warning btn-sm">Редактировать</a>
+                            <a href="{% url 'delete_item' item.id %}" class="btn btn-danger btn-sm">Удалить</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        По вашему запросу ничего не найдено.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

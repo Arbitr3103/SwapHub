@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Список вещей{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="mb-4">Список вещей</h1>
+            
+            <!-- Фильтры и кнопки -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <form method="get" class="row g-3">
+                                <div class="col-md-4">
+                                    {{ filter.form.title.label_tag }}
+                                    {{ filter.form.title }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ filter.form.category.label_tag }}
+                                    {{ filter.form.category }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">&nbsp;</label>
+                                    <div>
+                                        <button type="submit" class="btn btn-primary">Фильтровать</button>
+                                        <a href="{% url 'item_list' %}" class="btn btn-outline-secondary">Сбросить</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary active" id="showAllItems">Все вещи</button>
+                                {% if user.is_authenticated %}
+                                <button type="button" class="btn btn-outline-primary" id="showMyItems">Мои вещи</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Список вещей -->
+            <div id="itemsList">
+                {% if items %}
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for item in items %}
+                    <div class="col item-card" data-owner-id="{{ item.owner.id }}">
+                        <div class="card h-100 shadow-sm">
+                            {% if item.images.first %}
+                            <img src="{{ item.images.first.image.url }}" class="card-img-top item-list-image" alt="{{ item.title }}">
+                            {% else %}
+                            <img src="{% static 'img/no-image.jpg' %}" class="card-img-top item-list-image" alt="Нет изображения">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ item.title }}</h5>
+                                <p class="card-text">{{ item.description|truncatechars:100 }}</p>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        Владелец: {{ item.owner.username }}<br>
+                                        Рейтинг: {% if item.avg_rating %}{{ item.avg_rating|floatformat:1 }} ({{ item.total_reviews }} отзывов){% else %}Нет отзывов{% endif %}
+                                    </small>
+                                </p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="{% url 'item_detail' item.id %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+                                    <span class="text-success fw-bold">{{ item.rental_price }} ₽/день</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-info" id="noItemsMessage">
+                    {% if request.GET.owner %}
+                        У пользователя {{ request.GET.owner }} пока нет вещей.
+                        {% if request.user.username == request.GET.owner %}
+                            <a href="{% url 'add_item' %}" class="btn btn-primary mt-2">Добавить вещь</a>
+                        {% endif %}
+                    {% else %}
+                        Вещей пока нет.
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const showAllItemsBtn = document.getElementById('showAllItems');
+    const showMyItemsBtn = document.getElementById('showMyItems');
+    const itemCards = document.querySelectorAll('.item-card');
+    const noItemsMessage = document.getElementById('noItemsMessage');
+    const currentUserId = '{{ user.id }}';
+    const currentUsername = '{{ user.username }}';
+
+    // Проверяем, есть ли в URL параметр owner
+    const urlParams = new URLSearchParams(window.location.search);
+    const ownerParam = urlParams.get('owner');
+    
+    // Если есть параметр owner и это текущий пользователь, активируем кнопку "Мои вещи"
+    if (ownerParam && ownerParam === currentUsername && showMyItemsBtn) {
+        showAllItemsBtn.classList.remove('active');
+        showMyItemsBtn.classList.add('active');
+    }
+
+    function updateNoItemsMessage(showingMyItems) {
+        let visibleItems = 0;
+        itemCards.forEach(card => {
+            if (!card.style.display || card.style.display !== 'none') {
+                visibleItems++;
+            }
+        });
+
+        if (visibleItems === 0) {
+            if (!noItemsMessage) return; // Если элемент не найден
+            
+            noItemsMessage.style.display = 'block';
+            if (showingMyItems) {
+                noItemsMessage.innerHTML = 'У вас пока нет добавленных вещей. <a href="/items/add/" class="btn btn-primary mt-2">Добавить вещь</a>';
+            } else {
+                noItemsMessage.innerHTML = 'Вещей пока нет.';
+            }
+        } else if (noItemsMessage) {
+            noItemsMessage.style.display = 'none';
+        }
+    }
+
+    if (showMyItemsBtn) {
+        showMyItemsBtn.addEventListener('click', function() {
+            // Добавляем параметр owner в URL
+            const url = new URL(window.location.href);
+            url.searchParams.set('owner', currentUsername);
+            window.history.pushState({}, '', url);
+            
+            showAllItemsBtn.classList.remove('active');
+            showMyItemsBtn.classList.add('active');
+            
+            itemCards.forEach(card => {
+                const ownerId = card.dataset.ownerId;
+                card.style.display = (ownerId === currentUserId) ? '' : 'none';
+            });
+            
+            updateNoItemsMessage(true);
+        });
+
+        showAllItemsBtn.addEventListener('click', function() {
+            // Удаляем параметр owner из URL
+            const url = new URL(window.location.href);
+            url.searchParams.delete('owner');
+            window.history.pushState({}, '', url);
+            
+            showMyItemsBtn.classList.remove('active');
+            showAllItemsBtn.classList.add('active');
+            
+            itemCards.forEach(card => {
+                card.style.display = '';
+            });
+            
+            updateNoItemsMessage(false);
+        });
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}
