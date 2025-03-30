@@ -26,6 +26,7 @@ class Item(models.Model):
     location = models.CharField(max_length=255, blank=True, help_text="Город или адрес", verbose_name='Местоположение')
     is_available = models.BooleanField(default=True, verbose_name='Доступна для аренды')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    view_count = models.PositiveIntegerField(default=0, verbose_name='Количество просмотров')
 
     def __str__(self):
         return self.title
