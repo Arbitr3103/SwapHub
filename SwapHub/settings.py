@@ -177,7 +177,11 @@ if not DEBUG:
     AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'us-east-1')
     AWS_S3_USE_SSL = True
     AWS_S3_VERIFY = True
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+    
+    # Отключаем ACL для бакета
+    AWS_DEFAULT_ACL = None
+    AWS_BUCKET_ACL = None
     
     # Cache settings
     AWS_S3_OBJECT_PARAMETERS = {
