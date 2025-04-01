@@ -160,7 +160,7 @@ def edit_item(request, pk):
         print("Files:", request.FILES)
         
         try:
-            form = ItemForm(request.POST, request.FILES, instance=item)  # Добавляем request.FILES
+            form = ItemForm(request.POST, request.FILES, instance=item)
             if form.is_valid():
                 form.save()
                 
@@ -211,52 +211,25 @@ def edit_item(request, pk):
                     if primary_id:
                         # Снимаем признак основного со всех изображений
                         ItemImage.objects.filter(item=item).update(is_primary=False)
-                        # Устанавливаем новое основное изображение
-                        primary_image = ItemImage.objects.get(id=primary_id, item=item)
-                        primary_image.is_primary = True
-                        primary_image.save()
-                        
-                        messages.success(request, 'Основное изображение обновлено!')
+                        # Устанавливаем новое основное
+                        image = ItemImage.objects.get(id=primary_id, item=item)
+                        image.is_primary = True
+                        image.save()
+                        messages.success(request, 'Основное изображение изменено!')
                 
                 return redirect('item_detail', pk=item.pk)
         except Exception as e:
             print(f"Error in edit_item: {str(e)}")
             messages.error(request, f'Произошла ошибка: {str(e)}')
-                image_ids = request.POST.getlist('delete_images')
-                if image_ids:
-                    # Удаляем выбранные изображения
-                    ItemImage.objects.filter(id__in=image_ids, item=item).delete()
-                    
-                    # Если удалили основное изображение и есть другие изображения, устанавливаем новое основное
-                    if not ItemImage.objects.filter(item=item, is_primary=True).exists():
-                        first_image = ItemImage.objects.filter(item=item).first()
-                        if first_image:
-                            first_image.is_primary = True
-                            first_image.save()
-                    
-                    messages.success(request, 'Выбранные изображения удалены!')
-            
-            # Устанавливаем новое основное изображение
-            if 'set_primary' in request.POST:
-                primary_id = request.POST.get('set_primary')
-                if primary_id:
-                    # Снимаем признак основного со всех изображений
-                    ItemImage.objects.filter(item=item).update(is_primary=False)
-                    # Устанавливаем новое основное
-                    image = ItemImage.objects.get(id=primary_id, item=item)
-                    image.is_primary = True
-                    image.save()
-                    messages.success(request, 'Основное изображение изменено!')
-            
-            return redirect('item_detail', pk=item.pk)
-    else:
-        form = ItemForm(instance=item)
+            return render(request, 'items/edit_item.html', {
+                'form': form,
+                'item': item,
+                'images': images
+            })
     
-    # Обновляем список изображений после возможных изменений
-    images = ItemImage.objects.filter(item=item).order_by('-is_primary', 'uploaded_at')
-    
+    form = ItemForm(instance=item)
     return render(request, 'items/edit_item.html', {
-        'form': form, 
+        'form': form,
         'item': item,
         'images': images
     })
