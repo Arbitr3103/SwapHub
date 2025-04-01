@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: swaphub
+    runtime: python
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+    startCommand: gunicorn SwapHub.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: DEBUG
+        value: "false"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: swaphub-db
+          property: connectionString
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_STORAGE_BUCKET_NAME
+        sync: false
+      - key: AWS_S3_REGION_NAME
+        value: "us-east-1"
+    autoDeploy: true
+
+databases:
+  - name: swaphub-db
+    databaseName: swaphub_ru
+    user: vladimirbragin
+    plan: free
+    ipAllowList: []  # Разрешить доступ отовсюду

@@ -82,65 +82,65 @@
                 <div class="mt-4">
                     <nav aria-label="Навигация по страницам поиска">
                         <ul class="pagination justify-content-center mb-0">
-                            {% if users.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?q={{ query }}&page=1" aria-label="Первая" title="Первая страница">
-                                    <span aria-hidden="true">&laquo;&laquo;</span>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?q={{ query }}&page={{ users.previous_page_number }}" aria-label="Предыдущая" title="Предыдущая страница">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                            {% else %}
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" aria-label="Первая" title="Первая страница">
-                                    <span aria-hidden="true">&laquo;&laquo;</span>
-                                </a>
-                            </li>
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" aria-label="Предыдущая" title="Предыдущая страница">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                            {% endif %}
-                            
-                            {% for i in users.paginator.page_range %}
-                                {% if users.number == i %}
-                                <li class="page-item active">
-                                    <a class="page-link" href="?q={{ query }}&page={{ i }}" title="Страница {{ i }}">{{ i }}</a>
-                                </li>
-                                {% elif i > users.number|add:'-3' and i < users.number|add:'3' %}
+                            {%- if users.has_previous -%}
                                 <li class="page-item">
-                                    <a class="page-link" href="?q={{ query }}&page={{ i }}" title="Страница {{ i }}">{{ i }}</a>
+                                    <a class="page-link" href="?q={{ query }}&page=1" aria-label="Первая" title="Первая страница">
+                                        <span aria-hidden="true">&laquo;&laquo;</span>
+                                    </a>
                                 </li>
-                                {% endif %}
-                            {% endfor %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?q={{ query }}&page={{ users.previous_page_number }}" aria-label="Предыдущая" title="Предыдущая страница">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {%- else -%}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Первая" title="Первая страница">
+                                        <span aria-hidden="true">&laquo;&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Предыдущая" title="Предыдущая страница">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {%- endif -%}
                             
-                            {% if users.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?q={{ query }}&page={{ users.next_page_number }}" aria-label="Следующая" title="Следующая страница">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?q={{ query }}&page={{ users.paginator.num_pages }}" aria-label="Последняя" title="Последняя страница">
-                                    <span aria-hidden="true">&raquo;&raquo;</span>
-                                </a>
-                            </li>
-                            {% else %}
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" aria-label="Следующая" title="Следующая страница">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" aria-label="Последняя" title="Последняя страница">
-                                    <span aria-hidden="true">&raquo;&raquo;</span>
-                                </a>
-                            </li>
-                            {% endif %}
+                            {%- for i in users.paginator.page_range -%}
+                                {%- if users.number == i -%}
+                                    <li class="page-item active">
+                                        <a class="page-link" href="?q={{ query }}&page={{ i }}" title="Страница {{ i }}">{{ i }}</a>
+                                    </li>
+                                {%- elif i > users.number|add:'-3' and i < users.number|add:'3' -%}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?q={{ query }}&page={{ i }}" title="Страница {{ i }}">{{ i }}</a>
+                                    </li>
+                                {%- endif -%}
+                            {%- endfor -%}
+                            
+                            {%- if users.has_next -%}
+                                <li class="page-item">
+                                    <a class="page-link" href="?q={{ query }}&page={{ users.next_page_number }}" aria-label="Следующая" title="Следующая страница">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?q={{ query }}&page={{ users.paginator.num_pages }}" aria-label="Последняя" title="Последняя страница">
+                                        <span aria-hidden="true">&raquo;&raquo;</span>
+                                    </a>
+                                </li>
+                            {%- else -%}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Следующая" title="Следующая страница">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Последняя" title="Последняя страница">
+                                        <span aria-hidden="true">&raquo;&raquo;</span>
+                                    </a>
+                                </li>
+                            {%- endif -%}
                         </ul>
                     </nav>
                 </div>
