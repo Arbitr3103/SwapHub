@@ -1,5 +1,5 @@
 # Базовый образ для сборки
-FROM python:3.12-slim
+FROM public.ecr.aws/docker/library/python:3.12-slim
 
 # Установка необходимых системных пакетов
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -27,9 +27,6 @@ EXPOSE 8000
 
 # Запуск приложения
 CMD ["gunicorn", "SwapHub.wsgi:application", "--bind", "0.0.0.0:8000"]
-
-# Копирование файлов зависимостей
-COPY requirements.txt .
 
 # Установка зависимостей
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
