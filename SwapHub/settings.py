@@ -115,13 +115,21 @@ WSGI_APPLICATION = 'SwapHub.wsgi.application'
 # Database
 import dj_database_url
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f"postgresql://{os.environ.get('DB_USER', 'vladimirbragin')}:{os.environ.get('DB_PASSWORD', '')}@{os.environ.get('DB_HOST', 'localhost')}:{os.environ.get('DB_PORT', '5432')}/{os.environ.get('DB_NAME', 'swaphub_ru')}",
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+else:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
 
 
 # Password validation
