@@ -10,7 +10,10 @@
         <div class="carousel-inner">
           {% for image in images %}
           <div class="carousel-item {% if image.is_primary %}active{% endif %}">
-            <img src="{{ image.image.url }}" class="d-block w-100 rounded item-carousel-image" alt="{{ item.title }}">
+            <img src="{{ image.image.url }}" class="d-block w-100 rounded item-carousel-image" alt="{{ item.title }}"
+                 onerror="console.error('Failed to load image:', this.src);
+                         this.onerror=null;
+                         this.src='/static/img/no-image.jpg';">
           </div>
           {% endfor %}
         </div>

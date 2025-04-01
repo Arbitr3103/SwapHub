@@ -41,25 +41,33 @@ def item_list(request):
 @login_required
 def add_item(request):
     if request.method == "POST":
-        form = ItemForm(request.POST)
+        form = ItemForm(request.POST, request.FILES)  # Добавляем request.FILES
         if form.is_valid():
             # Сохраняем вещь
             item = form.save(commit=False)
-            item.owner = request.user  # Привязываем вещь к текущему пользователю
+            item.owner = request.user
             item.save()
+            
+            # Выводим отладочную информацию
+            print("Files in request:", request.FILES)
+            print("Images in request:", request.FILES.getlist('images'))
             
             # Обрабатываем загруженные изображения
             files = request.FILES.getlist('images')
-            
             if files:
+                print("Processing", len(files), "images")
                 for i, image_file in enumerate(files):
-                    # Первое изображение становится основным
-                    is_primary = (i == 0)
-                    ItemImage.objects.create(
-                        item=item,
-                        image=image_file,
-                        is_primary=is_primary
-                    )
+                    print(f"Processing image {i+1}: {image_file.name}")
+                    try:
+                        is_primary = (i == 0)
+                        image = ItemImage.objects.create(
+                            item=item,
+                            image=image_file,
+                            is_primary=is_primary
+                        )
+                        print(f"Created image {i+1} with URL: {image.image.url}")
+                    except Exception as e:
+                        print(f"Error processing image {i+1}: {str(e)}")
                 
                 messages.success(request, 'Вещь и изображения успешно добавлены!')
                 return redirect('item_detail', pk=item.pk)
