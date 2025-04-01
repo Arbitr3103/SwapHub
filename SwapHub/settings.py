@@ -42,7 +42,11 @@ TEMPLATES = [
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-#9ld7-7d8i0v-av#td5i#qw-z9^)7l4r_hyyo2()5w1vc*$s%x')
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY and DEBUG:
+    SECRET_KEY = 'django-insecure-dev-only-key'
+elif not SECRET_KEY:
+    raise ValueError('SECRET_KEY environment variable is required when DEBUG=False')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
