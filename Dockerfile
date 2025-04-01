@@ -13,6 +13,10 @@ RUN useradd -m appuser && chown -R appuser:appuser /home/appuser
 # Установка рабочей директории
 WORKDIR /app
 
+# Создание и активация виртуального окружения
+RUN python -m venv /app/venv
+ENV PATH="/app/venv/bin:$PATH"
+
 # Копирование файлов проекта
 COPY requirements.txt .
 
