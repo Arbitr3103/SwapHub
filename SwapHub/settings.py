@@ -41,16 +41,15 @@ TEMPLATES = [
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 if not SECRET_KEY and DEBUG:
     SECRET_KEY = 'django-insecure-dev-only-key'
 elif not SECRET_KEY:
     raise ValueError('SECRET_KEY environment variable is required when DEBUG=False')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,.onrender.com').split(',')
 
 # CSRF settings
