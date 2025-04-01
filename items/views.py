@@ -128,6 +128,13 @@ def item_detail(request, pk):
     primary_image = images.filter(is_primary=True).first()
     additional_images = images.filter(is_primary=False)
     
+    # Выводим отладочную информацию
+    print("\nImage URLs:")
+    for img in images:
+        print(f"Image {img.id}: {img.image.url}")
+        print(f"Image name: {img.image.name}")
+        print(f"Storage class: {img.image.storage.__class__.__name__}")
+    
     if request.user.is_authenticated and request.user != item.owner:
         user_request = RentalRequest.objects.filter(item=item, renter=request.user).first()
     
