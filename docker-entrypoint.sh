@@ -26,14 +26,34 @@ if [ "$USER_COUNT" -eq "0" ]; then
     ITEMS_COUNT=$(python manage.py shell -c "from items.models import Item; print(Item.objects.count())")
     echo "Items after loading data: $ITEMS_COUNT"
     
+    # Проверяем изображения
+    IMAGES_COUNT=$(python manage.py shell -c "from items.models import ItemImage; print(ItemImage.objects.count())")
+    echo "Images after loading data: $IMAGES_COUNT"
+    
     if [ "$NEW_USER_COUNT" -eq "0" ]; then
         echo "WARNING: Failed to load users from dump"
         cat db_dump.json
+    fi
+    
+    # Если есть вещи, но нет изображений, запускаем скрипт создания тестовых данных
+    if [ "$ITEMS_COUNT" -gt "0" ] && [ "$IMAGES_COUNT" -eq "0" ]; then
+        echo "Items exist but no images found. Running create_test_data.py..."
+        python create_test_data.py
     fi
 else
     echo "Database already has users, skipping initial data load"
     ITEMS_COUNT=$(python manage.py shell -c "from items.models import Item; print(Item.objects.count())")
     echo "Current items count: $ITEMS_COUNT"
+    
+    # Проверяем изображения
+    IMAGES_COUNT=$(python manage.py shell -c "from items.models import ItemImage; print(ItemImage.objects.count())")
+    echo "Current images count: $IMAGES_COUNT"
+    
+    # Если есть вещи, но нет изображений, запускаем скрипт создания тестовых данных
+    if [ "$ITEMS_COUNT" -gt "0" ] && [ "$IMAGES_COUNT" -eq "0" ]; then
+        echo "Items exist but no images found. Running create_test_data.py..."
+        python create_test_data.py
+    fi
 fi
 
 # Используем PORT из Render или 10000 по умолчанию
