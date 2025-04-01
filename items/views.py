@@ -155,29 +155,73 @@ def edit_item(request, pk):
     images = ItemImage.objects.filter(item=item).order_by('-is_primary', 'uploaded_at')
     
     if request.method == "POST":
-        form = ItemForm(request.POST, instance=item)
-        if form.is_valid():
-            form.save()
-            
-            # Обрабатываем загруженные изображения
-            files = request.FILES.getlist('images')
-            
-            if files:
-                # Устанавливаем первое изображение как основное, если еще нет изображений
-                is_first_image = not images.exists()
+        # Выводим отладочную информацию
+        print("\nPOST data:", request.POST)
+        print("Files:", request.FILES)
+        
+        try:
+            form = ItemForm(request.POST, request.FILES, instance=item)  # Добавляем request.FILES
+            if form.is_valid():
+                form.save()
                 
-                for i, image_file in enumerate(files):
-                    is_primary = is_first_image and i == 0
-                    ItemImage.objects.create(
-                        item=item,
-                        image=image_file,
-                        is_primary=is_primary
-                    )
+                # Обрабатываем загруженные изображения
+                files = request.FILES.getlist('images')
+                print(f"Found {len(files)} files to process")
                 
-                messages.success(request, 'Изображения успешно добавлены!')
-            
-            # Обрабатываем удаление изображений
-            if 'delete_images' in request.POST:
+                if files:
+                    # Устанавливаем первое изображение как основное, если еще нет изображений
+                    is_first_image = not images.exists()
+                    
+                    for i, image_file in enumerate(files):
+                        print(f"Processing image {i+1}: {image_file.name}")
+                        try:
+                            is_primary = is_first_image and i == 0
+                            image = ItemImage.objects.create(
+                                item=item,
+                                image=image_file,
+                                is_primary=is_primary
+                            )
+                            print(f"Created image {i+1} with URL: {image.image.url}")
+                        except Exception as e:
+                            print(f"Error creating image {i+1}: {str(e)}")
+                            messages.error(request, f'Ошибка при загрузке изображения {image_file.name}: {str(e)}')
+                            continue
+                    
+                    messages.success(request, 'Изображения успешно добавлены!')
+                
+                # Обрабатываем удаление изображений
+                if 'delete_images' in request.POST:
+                    image_ids = request.POST.getlist('delete_images')
+                    if image_ids:
+                        # Удаляем выбранные изображения
+                        ItemImage.objects.filter(id__in=image_ids, item=item).delete()
+                        
+                        # Если удалили основное изображение и есть другие изображения, устанавливаем новое основное
+                        if not ItemImage.objects.filter(item=item, is_primary=True).exists():
+                            first_image = ItemImage.objects.filter(item=item).first()
+                            if first_image:
+                                first_image.is_primary = True
+                                first_image.save()
+                        
+                        messages.success(request, 'Выбранные изображения удалены!')
+                
+                # Устанавливаем новое основное изображение
+                if 'set_primary' in request.POST:
+                    primary_id = request.POST.get('set_primary')
+                    if primary_id:
+                        # Снимаем признак основного со всех изображений
+                        ItemImage.objects.filter(item=item).update(is_primary=False)
+                        # Устанавливаем новое основное изображение
+                        primary_image = ItemImage.objects.get(id=primary_id, item=item)
+                        primary_image.is_primary = True
+                        primary_image.save()
+                        
+                        messages.success(request, 'Основное изображение обновлено!')
+                
+                return redirect('item_detail', pk=item.pk)
+        except Exception as e:
+            print(f"Error in edit_item: {str(e)}")
+            messages.error(request, f'Произошла ошибка: {str(e)}')
                 image_ids = request.POST.getlist('delete_images')
                 if image_ids:
                     # Удаляем выбранные изображения
