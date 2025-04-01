@@ -11,8 +11,9 @@ python manage.py collectstatic --noinput
 echo "Running migrations..."
 python manage.py migrate
 
-# Загрузка начальных данных, если база пустая
-if [ "$(python manage.py dumpdata auth.User --indent 2 | grep '\[]')" ]; then
+# Загрузка начальных данных, если нет пользователей
+USER_COUNT=$(python manage.py shell -c "from django.contrib.auth.models import User; print(User.objects.count())")
+if [ "$USER_COUNT" -eq "0" ]; then
     echo "Loading initial data..."
     python manage.py loaddata db_dump.json
 fi
