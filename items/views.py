@@ -169,10 +169,19 @@ def edit_item(request, pk):
                 print(f"Found {len(files)} files to process")
                 
                 if files:
+                    # Проверяем размер файлов
+                    max_size = 5 * 1024 * 1024  # 5MB
+                    valid_files = []
+                    for file in files:
+                        if file.size > max_size:
+                            messages.error(request, f'Файл {file.name} превышает максимальный размер 5MB')
+                            continue
+                        valid_files.append(file)
+                    
                     # Устанавливаем первое изображение как основное, если еще нет изображений
                     is_first_image = not images.exists()
                     
-                    for i, image_file in enumerate(files):
+                    for i, image_file in enumerate(valid_files):
                         print(f"Processing image {i+1}: {image_file.name}")
                         try:
                             is_primary = is_first_image and i == 0
@@ -182,12 +191,14 @@ def edit_item(request, pk):
                                 is_primary=is_primary
                             )
                             print(f"Created image {i+1} with URL: {image.image.url}")
+                            messages.success(request, f'Изображение {image_file.name} успешно загружено')
                         except Exception as e:
-                            print(f"Error creating image {i+1}: {str(e)}")
-                            messages.error(request, f'Ошибка при загрузке изображения {image_file.name}: {str(e)}')
+                            error_message = str(e)
+                            if 'AccessControlListNotSupported' in error_message:
+                                error_message = 'Ошибка доступа к хранилищу. Пожалуйста, попробуйте позже.'
+                            print(f"Error creating image {i+1}: {error_message}")
+                            messages.error(request, f'Ошибка при загрузке изображения {image_file.name}: {error_message}')
                             continue
-                    
-                    messages.success(request, 'Изображения успешно добавлены!')
                 
                 # Обрабатываем удаление изображений
                 if 'delete_images' in request.POST:

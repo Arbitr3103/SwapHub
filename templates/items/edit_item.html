@@ -142,25 +142,84 @@
 </div>
 
 <script>
-// Предварительный просмотр изображений
 document.addEventListener('DOMContentLoaded', function() {
-    const input = document.getElementById('new_images');
-    const preview = document.getElementById('uploadPreview');
+    const imageInput = document.querySelector('input[name="images"]');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const uploadPreview = document.getElementById('uploadPreview');
+    const previewModal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
     
-    input.addEventListener('change', function() {
-        preview.innerHTML = ''; // Очищаем предыдущий предпросмотр
+    // Функция для создания предпросмотра изображения
+    function createImagePreview(file, reader, container) {
+        const col = document.createElement('div');
+        col.className = 'col-md-4 mb-3';
         
-        if (this.files) {
-            [...this.files].forEach((file, index) => {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    const div = document.createElement('div');
-                    div.className = 'col-md-4 mb-3';
-                    
-                    reader.onload = function(e) {
-                        div.innerHTML = `
-                            <div class="card h-100">
-                                <img src="${e.target.result}" class="card-img-top" alt="Предпросмотр ${index + 1}" style="height: 200px; object-fit: cover;">
+        const card = document.createElement('div');
+        card.className = 'card h-100';
+        
+        const img = document.createElement('img');
+        img.src = reader.result;
+        img.className = 'card-img-top';
+        img.style.height = '200px';
+        img.style.objectFit = 'cover';
+        
+        const cardBody = document.createElement('div');
+        cardBody.className = 'card-body';
+        
+        const cardText = document.createElement('p');
+        cardText.className = 'card-text small';
+        cardText.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        
+        cardBody.appendChild(cardText);
+        card.appendChild(img);
+        card.appendChild(cardBody);
+        col.appendChild(card);
+        container.appendChild(col);
+    }
+    
+    // Добавляем кнопку предварительного просмотра
+    const previewButton = document.createElement('button');
+    previewButton.type = 'button';
+    previewButton.className = 'btn btn-outline-secondary mt-2';
+    previewButton.textContent = 'Предпросмотр';
+    previewButton.style.display = 'none';
+    previewButton.addEventListener('click', function() {
+        previewModal.show();
+    });
+    imageInput.parentNode.appendChild(previewButton);
+    
+    // Обработчик изменения файлов
+    imageInput.addEventListener('change', function() {
+        previewContainer.innerHTML = '';
+        uploadPreview.innerHTML = '';
+        
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        const files = Array.from(this.files).filter(file => {
+            if (file.size > maxSize) {
+                alert(`Файл ${file.name} превышает максимальный размер 5MB`);
+                return false;
+            }
+            return true;
+        });
+        
+        if (files.length > 0) {
+            previewButton.style.display = 'block';
+            previewButton.textContent = `Предпросмотр (${files.length} фото)`;
+            
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    createImagePreview(file, reader, previewContainer);
+                    createImagePreview(file, reader, uploadPreview);
+                };
+                reader.readAsDataURL(file);
+            });
+        } else {
+            previewButton.style.display = 'none';
+            this.value = ''; // Очищаем выбранные файлы
+        }
+    });
+});
+</script>>
                                 <div class="card-body">
                                     <p class="card-text small mb-0">${file.name}</p>
                                     <p class="card-text small text-muted">${(file.size / 1024).toFixed(1)} KB</p>

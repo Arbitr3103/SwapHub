@@ -113,7 +113,9 @@
           <h3 class="card-title">Забронированные периоды:</h3>
           <ul class="list-unstyled">
             {% for req in item.approved_rental_requests %}
-            <li>{{ req.start_date }} – {{ req.end_date }}</li>
+              <li>{{ req.start_date }} – {{ req.end_date }}</li>
+            {% empty %}
+              <li>Нет забронированных периодов</li>
             {% endfor %}
           </ul>
         </div>
