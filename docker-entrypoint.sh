@@ -11,11 +11,29 @@ python manage.py collectstatic --noinput
 echo "Running migrations..."
 python manage.py migrate
 
-# Загрузка начальных данных, если нет пользователей
+echo "Checking database state..."
 USER_COUNT=$(python manage.py shell -c "from django.contrib.auth.models import User; print(User.objects.count())")
+echo "Current user count: $USER_COUNT"
+
 if [ "$USER_COUNT" -eq "0" ]; then
-    echo "Loading initial data..."
+    echo "Database is empty, loading initial data..."
     python manage.py loaddata db_dump.json
+    
+    # Проверяем, загрузились ли данные
+    NEW_USER_COUNT=$(python manage.py shell -c "from django.contrib.auth.models import User; print(User.objects.count())")
+    echo "Users after loading data: $NEW_USER_COUNT"
+    
+    ITEMS_COUNT=$(python manage.py shell -c "from items.models import Item; print(Item.objects.count())")
+    echo "Items after loading data: $ITEMS_COUNT"
+    
+    if [ "$NEW_USER_COUNT" -eq "0" ]; then
+        echo "WARNING: Failed to load users from dump"
+        cat db_dump.json
+    fi
+else
+    echo "Database already has users, skipping initial data load"
+    ITEMS_COUNT=$(python manage.py shell -c "from items.models import Item; print(Item.objects.count())")
+    echo "Current items count: $ITEMS_COUNT"
 fi
 
 # Используем PORT из Render или 10000 по умолчанию
