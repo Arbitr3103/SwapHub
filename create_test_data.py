@@ -18,7 +18,7 @@ test_items = [
         'category': 'sports',
         'location': 'Москва',
         'rental_price': 1500,
-        'image_url': 'https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?w=800',
+        'image_url': 'https://cdn.pixabay.com/photo/2015/05/29/19/18/bicycle-789648_1280.jpg',
     },
     {
         'title': 'Электросамокат Xiaomi Pro 2',
@@ -26,7 +26,7 @@ test_items = [
         'category': 'electronics',
         'location': 'Санкт-Петербург',
         'rental_price': 2000,
-        'image_url': 'https://images.unsplash.com/photo-1605557626697-2e29953cec5c?w=800',
+        'image_url': 'https://cdn.pixabay.com/photo/2019/10/26/13/36/electric-scooter-4579992_1280.jpg',
     },
     {
         'title': 'Велосипед BMX',
@@ -34,7 +34,7 @@ test_items = [
         'category': 'sports',
         'location': 'Новосибирск',
         'rental_price': 1200,
-        'image_url': 'https://images.unsplash.com/photo-1583118443607-33f6a50cafdd?w=800',
+        'image_url': 'https://cdn.pixabay.com/photo/2020/01/21/16/26/bike-4783374_1280.jpg',
     },
     {
         'title': 'Электросамокат Ninebot Max',
@@ -42,7 +42,7 @@ test_items = [
         'category': 'electronics',
         'location': 'Москва',
         'rental_price': 2500,
-        'image_url': 'https://images.unsplash.com/photo-1628898576802-af4d9174ae67?w=800',
+        'image_url': 'https://cdn.pixabay.com/photo/2022/08/09/14/30/e-scooter-7375375_1280.jpg',
     },
     {
         'title': 'Складной велосипед Brompton',
@@ -50,7 +50,7 @@ test_items = [
         'category': 'sports',
         'location': 'Санкт-Петербург',
         'rental_price': 1800,
-        'image_url': 'https://images.unsplash.com/photo-1593764592116-bfb2a97c642a?w=800',
+        'image_url': 'https://cdn.pixabay.com/photo/2016/11/18/12/49/bicycle-1834265_1280.jpg',
     },
     {
         'title': 'Гироскутер Segway',
@@ -58,7 +58,7 @@ test_items = [
         'category': 'electronics',
         'location': 'Новосибирск',
         'rental_price': 1000,
-        'image_url': 'https://images.unsplash.com/photo-1527674905530-6b94d31e7897?w=800',
+        'image_url': 'https://cdn.pixabay.com/photo/2019/05/26/08/06/hoverboard-4229893_1280.jpg',
     },
     {
         'title': 'Городской велосипед Schwinn',
@@ -66,7 +66,7 @@ test_items = [
         'category': 'sports',
         'location': 'Москва',
         'rental_price': 1300,
-        'image_url': 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800',
+        'image_url': 'https://cdn.pixabay.com/photo/2014/07/05/08/20/bike-384566_1280.jpg',
     },
     {
         'title': 'Электровелосипед Bosch',
@@ -74,7 +74,7 @@ test_items = [
         'category': 'electronics',
         'location': 'Санкт-Петербург',
         'rental_price': 3000,
-        'image_url': 'https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800',
+        'image_url': 'https://cdn.pixabay.com/photo/2016/02/22/20/22/mountain-bike-1216431_1280.jpg',
     },
     {
         'title': 'Детский велосипед Giant',
@@ -82,7 +82,7 @@ test_items = [
         'category': 'sports',
         'location': 'Новосибирск',
         'rental_price': 800,
-        'image_url': 'https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?w=800',
+        'image_url': 'https://cdn.pixabay.com/photo/2014/06/22/05/49/childrens-bicycle-374310_1280.jpg',
     },
     {
         'title': 'Электроскейт Boosted',
@@ -90,7 +90,7 @@ test_items = [
         'category': 'electronics',
         'location': 'Москва',
         'rental_price': 2200,
-        'image_url': 'https://images.unsplash.com/photo-1547447134-cd3f5c716030?w=800',
+        'image_url': 'https://cdn.pixabay.com/photo/2017/08/01/08/29/people-2563491_1280.jpg',
     },
 ]
 
@@ -112,18 +112,24 @@ def create_test_items():
         
         # Загружаем изображение
         try:
-            response = requests.get(item_data['image_url'])
+            # Добавляем заголовки, чтобы обойти ограничения
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+            }
+            response = requests.get(item_data['image_url'], headers=headers, stream=True)
+            print(f"Image download status for {item.title}: {response.status_code}")
+            
             if response.status_code == 200:
                 img_temp = NamedTemporaryFile(delete=True)
                 img_temp.write(response.content)
                 img_temp.flush()
                 
-                # Создаем изображение для вещи
-                image = ItemImage.objects.create(item=item)
-                image.image.save(f"item_{item.id}.jpg", File(img_temp))
-                print(f"Created item: {item.title} with image")
+                # Создаем изображение для вещи и устанавливаем его как основное
+                image = ItemImage(item=item, is_primary=True)
+                image.image.save(f"item_{item.id}.jpg", File(img_temp), save=True)
+                print(f"Created item: {item.title} with image at {image.image.url}")
             else:
-                print(f"Failed to download image for {item.title}")
+                print(f"Failed to download image for {item.title} - status code: {response.status_code}")
         except Exception as e:
             print(f"Error creating image for {item.title}: {str(e)}")
 
