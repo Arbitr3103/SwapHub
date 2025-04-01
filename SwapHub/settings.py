@@ -200,32 +200,23 @@ else:
     AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
     AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'us-east-1')
     AWS_S3_FILE_OVERWRITE = False
-    AWS_S3_VERIFY = True
-    AWS_DEFAULT_ACL = None  # Отключаем ACL
+    AWS_DEFAULT_ACL = 'public-read'  # Разрешаем публичное чтение
     AWS_QUERYSTRING_AUTH = False  # Отключаем query auth
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
     
     # S3 static settings
     STATIC_LOCATION = 'static'
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
     
     # S3 media settings
     MEDIA_LOCATION = 'media'
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     
-    STORAGES = {
-        'default': {
-            'BACKEND': 'storages.backends.s3boto3.S3Boto3Storage',
-            'OPTIONS': {
-                'location': MEDIA_LOCATION
-            },
-        },
-        'staticfiles': {
-            'BACKEND': 'storages.backends.s3boto3.S3StaticStorage',
-            'OPTIONS': {
-                'location': STATIC_LOCATION
-            },
-        },
+    # Дополнительные настройки S3
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',  # 24 часа кэширования
     }
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
