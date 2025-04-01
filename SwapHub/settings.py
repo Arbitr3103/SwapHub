@@ -188,7 +188,7 @@ if not DEBUG:
     AWS_S3_CORS_RULES = [
         {
             'AllowedHeaders': ['*'],
-            'AllowedMethods': ['GET', 'POST', 'PUT'],
+            'AllowedMethods': ['GET', 'PUT', 'HEAD', 'POST', 'DELETE'],
             'AllowedOrigins': ['*'],
             'ExposeHeaders': ['ETag'],
             'MaxAgeSeconds': 86400
