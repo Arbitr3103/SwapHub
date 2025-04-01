@@ -4,7 +4,7 @@
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$720000$Eg1oWWBEzlfTtBfpZmeUJY$6KrfsXKvCNPJ6TlqUZbzRRgokOjX9xK7M1PyNgysqdA=",
-    "last_login": null,
+    "last_login": "2025-04-01T12:04:37.567Z",
     "is_superuser": true,
     "username": "Arbitr",
     "first_name": "",
@@ -18,6 +18,14 @@
   }
 },
 {
+  "model": "sessions.session",
+  "pk": "2e73s0hebiv3526vyj67jlk8yvcm1mib",
+  "fields": {
+    "session_data": ".eJxVjMEOwiAQBf-FsyHAQgGP3v0GssAiVQNJaU_Gf9cmPej1zcx7sYDbWsM2aAlzZmcm2el3i5ge1HaQ79hunafe1mWOfFf4QQe_9kzPy-H-HVQc9VubRE5b4RVqayJo56IXMk5JQKJcDDrlCKWyCQp4m0kCoDXZRjMpaQp7fwDRtDd4:1tzaM9:7MSlP2mYyMGuvbpU8-JW4n7BV8pJCtELv_wrdBfjywQ",
+    "expire_date": "2025-04-15T12:04:37.569Z"
+  }
+},
+{
   "model": "users.profile",
   "pk": 1,
   "fields": {
@@ -27,7 +35,217 @@
     "location": "",
     "phone": "",
     "created_at": "2025-04-01T11:30:53.574Z",
-    "updated_at": "2025-04-01T11:30:53.575Z"
+    "updated_at": "2025-04-01T12:04:37.568Z"
+  }
+},
+{
+  "model": "items.item",
+  "pk": 1,
+  "fields": {
+    "owner": 1,
+    "title": "Горный велосипед Trek",
+    "description": "Отличный горный велосипед для активного отдыха. В хорошем состоянии.",
+    "category": "sports",
+    "rental_price": "1500.00",
+    "location": "Москва",
+    "is_available": true,
+    "created_at": "2025-04-01T12:07:46.603Z",
+    "view_count": 0
+  }
+},
+{
+  "model": "items.item",
+  "pk": 2,
+  "fields": {
+    "owner": 1,
+    "title": "Электросамокат Xiaomi Pro 2",
+    "description": "Мощный электросамокат с большим запасом хода. Идеален для городской среды.",
+    "category": "electronics",
+    "rental_price": "2000.00",
+    "location": "Санкт-Петербург",
+    "is_available": true,
+    "created_at": "2025-04-01T12:07:47.702Z",
+    "view_count": 0
+  }
+},
+{
+  "model": "items.item",
+  "pk": 3,
+  "fields": {
+    "owner": 1,
+    "title": "Велосипед BMX",
+    "description": "Трюковой велосипед для экстремального катания. Усиленная рама.",
+    "category": "sports",
+    "rental_price": "1200.00",
+    "location": "Новосибирск",
+    "is_available": true,
+    "created_at": "2025-04-01T12:07:49.254Z",
+    "view_count": 0
+  }
+},
+{
+  "model": "items.item",
+  "pk": 4,
+  "fields": {
+    "owner": 1,
+    "title": "Электросамокат Ninebot Max",
+    "description": "Надежный электросамокат с большими колесами. Подходит для дальних поездок.",
+    "category": "electronics",
+    "rental_price": "2500.00",
+    "location": "Москва",
+    "is_available": true,
+    "created_at": "2025-04-01T12:07:50.152Z",
+    "view_count": 0
+  }
+},
+{
+  "model": "items.item",
+  "pk": 5,
+  "fields": {
+    "owner": 1,
+    "title": "Складной велосипед Brompton",
+    "description": "Компактный городской велосипед. Легко складывается и удобен для хранения.",
+    "category": "sports",
+    "rental_price": "1800.00",
+    "location": "Санкт-Петербург",
+    "is_available": true,
+    "created_at": "2025-04-01T12:07:51.064Z",
+    "view_count": 0
+  }
+},
+{
+  "model": "items.item",
+  "pk": 6,
+  "fields": {
+    "owner": 1,
+    "title": "Гироскутер Segway",
+    "description": "Современный гироскутер с подсветкой. Отлично подходит для развлечений.",
+    "category": "electronics",
+    "rental_price": "1000.00",
+    "location": "Новосибирск",
+    "is_available": true,
+    "created_at": "2025-04-01T12:07:52.060Z",
+    "view_count": 0
+  }
+},
+{
+  "model": "items.item",
+  "pk": 7,
+  "fields": {
+    "owner": 1,
+    "title": "Городской велосипед Schwinn",
+    "description": "Классический городской велосипед с корзиной. Идеален для поездок по городу.",
+    "category": "sports",
+    "rental_price": "1300.00",
+    "location": "Москва",
+    "is_available": true,
+    "created_at": "2025-04-01T12:07:53.310Z",
+    "view_count": 0
+  }
+},
+{
+  "model": "items.item",
+  "pk": 8,
+  "fields": {
+    "owner": 1,
+    "title": "Электровелосипед Bosch",
+    "description": "Мощный электровелосипед с длительным временем работы от батареи.",
+    "category": "electronics",
+    "rental_price": "3000.00",
+    "location": "Санкт-Петербург",
+    "is_available": true,
+    "created_at": "2025-04-01T12:07:54.318Z",
+    "view_count": 0
+  }
+},
+{
+  "model": "items.item",
+  "pk": 9,
+  "fields": {
+    "owner": 1,
+    "title": "Детский велосипед Giant",
+    "description": "Надежный детский велосипед с дополнительными колесами.",
+    "category": "sports",
+    "rental_price": "800.00",
+    "location": "Новосибирск",
+    "is_available": true,
+    "created_at": "2025-04-01T12:07:55.420Z",
+    "view_count": 0
+  }
+},
+{
+  "model": "items.item",
+  "pk": 10,
+  "fields": {
+    "owner": 1,
+    "title": "Электроскейт Boosted",
+    "description": "Мощный электрический скейтборд. Развивает скорость до 40 км/ч.",
+    "category": "electronics",
+    "rental_price": "2200.00",
+    "location": "Москва",
+    "is_available": true,
+    "created_at": "2025-04-01T12:07:56.433Z",
+    "view_count": 0
+  }
+},
+{
+  "model": "items.itemimage",
+  "pk": 1,
+  "fields": {
+    "item": 1,
+    "image": "uploads/items/1/trek_item_1.jpg",
+    "is_primary": false,
+    "uploaded_at": "2025-04-01T12:07:47.694Z"
+  }
+},
+{
+  "model": "items.itemimage",
+  "pk": 2,
+  "fields": {
+    "item": 5,
+    "image": "uploads/items/5/brompton_item_5.jpg",
+    "is_primary": false,
+    "uploaded_at": "2025-04-01T12:07:52.054Z"
+  }
+},
+{
+  "model": "items.itemimage",
+  "pk": 3,
+  "fields": {
+    "item": 7,
+    "image": "uploads/items/7/schwinn_item_7.jpg",
+    "is_primary": false,
+    "uploaded_at": "2025-04-01T12:07:54.315Z"
+  }
+},
+{
+  "model": "items.itemimage",
+  "pk": 4,
+  "fields": {
+    "item": 8,
+    "image": "uploads/items/8/bosch_item_8.jpg",
+    "is_primary": false,
+    "uploaded_at": "2025-04-01T12:07:55.415Z"
+  }
+},
+{
+  "model": "items.itemimage",
+  "pk": 5,
+  "fields": {
+    "item": 9,
+    "image": "uploads/items/9/giant_item_9.jpg",
+    "is_primary": false,
+    "uploaded_at": "2025-04-01T12:07:56.429Z"
+  }
+},
+{
+  "model": "items.itemimage",
+  "pk": 6,
+  "fields": {
+    "item": 10,
+    "image": "uploads/items/10/boosted_item_10.jpg",
+    "is_primary": false,
+    "uploaded_at": "2025-04-01T12:07:57.494Z"
   }
 }
 ]
