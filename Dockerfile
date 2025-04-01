@@ -29,11 +29,12 @@ RUN mkdir -p staticfiles media && \
 # Переключение на пользователя appuser
 USER appuser
 
-# Сбор статических файлов
-RUN python manage.py collectstatic --noinput
-
 # Открытие порта
 EXPOSE 8000
 
-# Запуск приложения через gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "SwapHub.wsgi:application", "--workers", "4"]
+# Создание скрипта запуска
+COPY --chown=appuser:appuser docker-entrypoint.sh /app/
+RUN chmod +x /app/docker-entrypoint.sh
+
+# Запуск приложения через entrypoint
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
