@@ -33,8 +33,9 @@ RUN mkdir -p staticfiles media && \
 # Переключение на пользователя appuser
 USER appuser
 
-# Открытие порта
-EXPOSE 8000
+# Установка порта по умолчанию
+ENV PORT=10000
+EXPOSE ${PORT}
 
 # Создание скрипта запуска
 COPY --chown=appuser:appuser docker-entrypoint.sh /app/
