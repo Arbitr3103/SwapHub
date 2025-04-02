@@ -40,7 +40,7 @@
 
                         <div class="mb-3">
                             <label for="ordering" class="form-label">Сортировка</label>
-                            <select name="ordering" class="form-select">
+                            <select name="ordering" class="form-select" aria-label="Сортировка товаров" title="Выберите способ сортировки">
                                 <option value="">По умолчанию</option>
                                 <option value="created_at" {% if request.GET.ordering == 'created_at' %}selected{% endif %}>Дата ↑</option>
                                 <option value="-created_at" {% if request.GET.ordering == '-created_at' %}selected{% endif %}>Дата ↓</option>
@@ -53,8 +53,8 @@
 
                         <div class="mb-3">
                             <div class="form-check">
-                                <input type="checkbox" name="is_available" class="form-check-input" value="true" {% if request.GET.is_available %}checked{% endif %}>
-                                <label class="form-check-label">Только доступные</label>
+                                <input type="checkbox" id="is_available" name="is_available" class="form-check-input" value="true" {% if request.GET.is_available %}checked{% endif %} title="Показать только доступные товары">
+                                <label class="form-check-label" for="is_available">Только доступные</label>
                             </div>
                         </div>
 
@@ -70,9 +70,13 @@
                 {% for item in items %}
                 <div class="col">
                     <div class="card h-100">
-                        {% if item.image %}
-                        <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}">
-                        {% endif %}
+                        <div class="card-img-container">
+                            {% if item.image %}
+                            <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}" onerror="this.onerror=null; this.src='/static/img/no-image.jpg';">
+                            {% else %}
+                            <img src="/static/img/no-image.jpg" class="card-img-top" alt="Нет изображения">
+                            {% endif %}
+                        </div>
                         <div class="card-body">
                             <h5 class="card-title">{{ item.title }}</h5>
                             <p class="card-text">{{ item.description|truncatewords:20 }}</p>

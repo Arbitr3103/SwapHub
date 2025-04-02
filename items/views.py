@@ -30,9 +30,22 @@ def item_list(request):
     else:
         show_my_items = False
     
+    # Добавляем основное изображение к каждому товару
+    items_with_images = []
+    for item in filtered_items:
+        # Получаем основное изображение для товара
+        primary_image = ItemImage.objects.filter(item=item, is_primary=True).first()
+        if not primary_image:
+            # Если нет основного изображения, берем первое доступное
+            primary_image = ItemImage.objects.filter(item=item).first()
+        
+        # Добавляем изображение к товару
+        item.image = primary_image.image if primary_image else None
+        items_with_images.append(item)
+    
     context = {
         'filter': item_filter,
-        'items': filtered_items,
+        'items': items_with_images,
         'user': request.user,
         'show_my_items': show_my_items
     }
