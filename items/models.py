@@ -4,6 +4,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 import os
+from PIL import Image
+from io import BytesIO
+from django.core.files.base import ContentFile
 
 class Item(models.Model):
     CATEGORY_CHOICES = [
@@ -109,3 +112,36 @@ class ItemImage(models.Model):
     
     def __str__(self):
         return f"Изображение для {self.item.title} ({self.id})"
+    
+    def save(self, *args, **kwargs):
+        # Проверяем, является ли это новым изображением
+        if self.pk is None and self.image:
+            # Максимальные размеры для изображения
+            max_width = 1200
+            max_height = 900
+            
+            # Открываем изображение с помощью Pillow
+            img = Image.open(self.image)
+            
+            # Получаем формат изображения
+            img_format = img.format
+            
+            # Проверяем, нужно ли изменять размер
+            if img.width > max_width or img.height > max_height:
+                # Сохраняем пропорции
+                img.thumbnail((max_width, max_height), Image.LANCZOS)
+                
+                # Сохраняем изображение в буфер
+                buffer = BytesIO()
+                # Сохраняем с оптимальным качеством
+                img.save(buffer, format=img_format, quality=85, optimize=True)
+                buffer.seek(0)
+                
+                # Заменяем оригинальное изображение
+                self.image.save(
+                    self.image.name,
+                    ContentFile(buffer.read()),
+                    save=False
+                )
+                
+        super().save(*args, **kwargs)
