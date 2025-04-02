@@ -6,27 +6,29 @@
     <div class="col-md-8">
       <!-- Карусель изображений -->
       {% if images %}
-      <div id="itemImagesCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-        <div class="carousel-inner">
-          {% for image in images %}
-          <div class="carousel-item {% if image.is_primary %}active{% endif %}">
-            <img src="{{ image.image.url }}" class="d-block w-100 rounded item-carousel-image" alt="{{ item.title }}"
-                 onerror="console.error('Failed to load image:', this.src);
-                         this.onerror=null;
-                         this.src='/static/img/no-image.jpg';">
+      <div class="carousel-container">
+        <div id="itemImagesCarousel" class="carousel slide w-100" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            {% for image in images %}
+            <div class="carousel-item {% if image.is_primary %}active{% endif %}">
+              <img src="{{ image.image.url }}" class="item-carousel-image" alt="{{ item.title }}"
+                   onerror="console.error('Failed to load image:', this.src);
+                           this.onerror=null;
+                           this.src='/static/img/no-image.jpg';">
+            </div>
+            {% endfor %}
           </div>
-          {% endfor %}
+          {% if images.count > 1 %}
+          <button class="carousel-control-prev" type="button" data-bs-target="#itemImagesCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Предыдущий</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#itemImagesCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Следующий</span>
+          </button>
+          {% endif %}
         </div>
-        {% if images.count > 1 %}
-        <button class="carousel-control-prev" type="button" data-bs-target="#itemImagesCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Предыдущий</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#itemImagesCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Следующий</span>
-        </button>
-        {% endif %}
       </div>
       
       <!-- Миниатюры для изображений -->
